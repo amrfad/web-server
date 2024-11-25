@@ -4,10 +4,27 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <signal.h>
+
+int server_fd;
+
+void handle_signal(int sig) {
+    if (sig == SIGINT) {
+	printf("\nReceived SIGINT (CTRL+C). Shutting down server...\n");
+	if (server_fd > 0) {
+	    // Close server socket
+	    close(server_fd);
+	}
+	exit(EXIT_SUCCESS);
+    }
+}
 
 int main() {
+    // Setup signal handler
+    signal(SIGINT, handle_signal);
+
     // Membuat socket
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
 	perror("Socket creation failed!");
 	exit(EXIT_FAILURE);
@@ -50,8 +67,4 @@ int main() {
 	// Close client socket
 	close(client_fd);
     }
-    
-    // Close server socket
-    close(server_fd);
-    return EXIT_SUCCESS;
 }

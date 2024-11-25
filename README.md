@@ -11,9 +11,9 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 - [x] Accept connections
 
 ### 2. Single Client Communication
-- [ ] Read client request
-- [ ] Send basic response
-- [ ] Handle client disconnect
+- [x] Read client request
+- [x] Send basic response
+- [x] Handle client disconnect
 - [ ] Basic buffer management
 
 ### 3. HTTP Protocol

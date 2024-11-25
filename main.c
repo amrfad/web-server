@@ -6,6 +6,8 @@
 #include <netinet/in.h>
 #include <signal.h>
 
+#define BUFFER_SIZE 1024
+
 int server_fd;
 
 void handle_signal(int sig) {
@@ -63,6 +65,17 @@ int main() {
 	}
 	
 	printf("New client connected\n");
+
+	// Read data from client
+	char buffer[BUFFER_SIZE] = {0};
+	ssize_t bytes_received = recv(client_fd, buffer, BUFFER_SIZE - 1, 0);
+	if (bytes_received > 0) {
+	    printf("Received data from client:\n%s\n", buffer);
+
+	    // Send response to client
+	    char *response = "HTTP/1.1 200 OK\r\n\r\nHello from server! English or Spanish?";
+	    send(client_fd, response, strlen(response), 0);
+	}
 	
 	// Close client socket
 	close(client_fd);

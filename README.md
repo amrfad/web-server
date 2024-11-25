@@ -5,10 +5,10 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 ## Progress
 
 ### 1. Basic Network Setup
-- [ ] Create TCP socket
-- [ ] Bind to port 80
-- [ ] Listen for connections
-- [ ] Accept connections
+- [x] Create TCP socket
+- [x] Bind to port 8080
+- [x] Listen for connections
+- [x] Accept connections
 
 ### 2. Single Client Communication
 - [ ] Read client request

@@ -14,12 +14,12 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 - [x] Read client request
 - [x] Send basic response
 - [x] Handle client disconnect
-- [ ] Basic buffer management
+- [x] Basic buffer management
 
 ### 3. HTTP Protocol
-- [ ] Parse request line (GET /path HTTP/1.1)
-- [ ] Parse request headers
-- [ ] Parse URL & query params
+- [x] Parse request line (GET /path HTTP/1.1)
+- [x] Parse request headers
+- [x] Parse URL & query params
 - [ ] Create response with headers
 - [ ] Handle different HTTP methods
 - [ ] Set response status codes

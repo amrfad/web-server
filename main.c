@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <signal.h>
+#include "request_parser.h"
 
 #define BUFFER_SIZE 1024
 
@@ -70,7 +71,25 @@ int main() {
 	char buffer[BUFFER_SIZE] = {0};
 	ssize_t bytes_received = recv(client_fd, buffer, BUFFER_SIZE - 1, 0);
 	if (bytes_received > 0) {
-	    printf("Received data from client:\n%s\n", buffer);
+	    printf("\n\033[1;32mReceived HTTP request from client: \033[0m\n\n");
+
+	    // Test HTTP parser
+	    HttpRequest request;
+	    if (parse_http_request(buffer, &request)) {
+		printf("Method: %s\n", request.method);
+		printf("Path: %s\n", request.path);
+		printf("Protocol: %s\n", request.protocol);
+
+		printf("\nQuery Parameters:\n");
+		for (size_t i = 0; i < request.param_count; i++) {
+		    printf("  %s = %s\n", request.params[i].key, request.params[i].value);
+		}
+
+		printf("\nHeaders:\n");
+		for (size_t i = 0; i < request.header_count; i++) {
+		    printf("  %s: %s\n", request.headers[i].key, request.headers[i].value);
+		}
+	    }
 
 	    // Send response to client
 	    char *response = "HTTP/1.1 200 OK\r\n\r\nHello from server! English or Spanish?";

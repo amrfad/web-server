@@ -20,9 +20,9 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 - [x] Parse request line (GET /path HTTP/1.1)
 - [x] Parse request headers
 - [x] Parse URL & query params
-- [ ] Create response with headers
-- [ ] Handle different HTTP methods
-- [ ] Set response status codes
+- [x] Create response with headers
+- [x] Handle different HTTP methods
+- [x] Set response status codes
 
 ### 4. File Handling
 - [ ] Serve static files

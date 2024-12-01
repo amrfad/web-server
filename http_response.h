@@ -5,7 +5,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
 #include "http_request.h"
+#include "file_handler.h"
 
 /**
  * @brief Mengembalikan pesan status berdasarkan kode status HTTP.

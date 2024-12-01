@@ -25,11 +25,11 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 - [x] Set response status codes
 
 ### 4. File Handling
-- [ ] Serve static files
-- [ ] Handle default index.html
-- [ ] Set Content-Type
-- [ ] Basic directory protection
-- [ ] Handle file not found
+- [x] Serve static files
+- [x] Handle default index.html
+- [x] Set Content-Type
+- [x] Basic directory protection
+- [x] Handle file not found
 
 ### 5. Multi-client Support
 - [ ] Thread pool

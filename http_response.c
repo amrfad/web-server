@@ -30,7 +30,7 @@ void create_response(char *buffer, size_t buffer_size, int status_code,
 	     body);
 }
 
-// Fungsi untuk memvalidasi request (contho validasi sederhana)
+// Fungsi untuk memvalidasi request (contoh validasi sederhana)
 bool validate_request(const HttpRequest *request) {
     // Vallidasi hanya mendukung HTTP/1.1
     return strcmp(request->protocol, "HTTP/1.1") == 0;
@@ -39,11 +39,29 @@ bool validate_request(const HttpRequest *request) {
 
 // Fungsi utama untuk menangani GET request
 void handle_get_request(const char *path, char *response, size_t response_size) {
-    /* Masih prototype . . . */
-    if (strcmp(path, "/") == 0) {
-	create_response(response, response_size, 200, "text/html", "<h1>Welcome to the homepage!</h1>");
-    } else if (strcmp(path, "/about") == 0) {
-	create_response(response, response_size, 200, "text/html", "<h1>About Us\nThis is our Web Server!</h1>");
+    char file_path[512];
+    const char *root = "./www";
+    snprintf(file_path, sizeof(file_path), "%s%s", root, path); // Root direktori ./www
+    
+    // Default ke index.html jika path adalah direktori
+    struct stat path_stat;
+    if (stat(file_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode)) {
+	strncat(file_path, "/index.html", sizeof(file_path) - strlen(file_path) - 1);
+    }
+    
+    // Basic directory protection (masih prototype . . .)
+    char resolved_path[512];
+    if (!validate_path(root, path, resolved_path, sizeof(resolved_path))) {
+	create_response(response, response_size, 403, "text/html", "<h1>403 Forbidden</h1>");
+    }
+
+    // Baca file
+    char *file_content = NULL;
+    size_t file_size = 0;
+    if (read_file(file_path, &file_content, &file_size)) {
+	const char *content_type = get_content_type(file_path);
+	create_response(response, response_size, 200, content_type, file_content);
+	free(file_content);
     } else {
 	create_response(response, response_size, 404, "text/html", "<h1>404 Not Found</h1>");
     }

@@ -75,7 +75,7 @@ int main() {
 	    // Test HTTP parser and handler
 	    HttpRequest request;
 	    if (parse_http_request(buffer, &request)) {
-		char response[1024];
+		char response[8192];
 		handle_request(&request, response, sizeof(response));
 		// printf("%s\n", response);
 		free_http_request(&request);

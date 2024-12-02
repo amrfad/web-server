@@ -77,7 +77,7 @@ int main() {
 	    if (parse_http_request(buffer, &request)) {
 		char response[8192];
 		handle_request(&request, response, sizeof(response));
-		// printf("%s\n", response);
+		printf("%s\n", response);
 		free_http_request(&request);
 
 		// Send response to client

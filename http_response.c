@@ -32,8 +32,8 @@ void create_response(char *buffer, size_t buffer_size, int status_code,
 
 // Fungsi untuk memvalidasi request (contoh validasi sederhana)
 bool validate_request(const HttpRequest *request) {
-    // Vallidasi hanya mendukung HTTP/1.1
-    return strcmp(request->protocol, "HTTP/1.1") == 0;
+    // Vallidasi hanya mendukung HTTP/1.1 dan HTTP/1.0
+    return (strcmp(request->protocol, "HTTP/1.1") == 0) || (strcmp(request->protocol, "HTTP/1.0") == 0);
     /* Validasi lainnya akan ditambahkan . . . */
 }
 

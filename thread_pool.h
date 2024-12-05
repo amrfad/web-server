@@ -6,11 +6,9 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <string.h>
-//#include <netinet/in.h>
-//#include <sys/socket.h>
 
-#define MAX_QUEUE 10
-#define THREAD_POOL_SIZE 8
+#define MAX_QUEUE 100
+#define THREAD_POOL_SIZE 16
 
 // Struktur data untuk menyimpan antrian permintaan HTTP
 typedef struct {
@@ -19,6 +17,7 @@ typedef struct {
     int size;
     int front;
     int rear;
+    int shutdown;
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 } TaskQueue;
@@ -28,6 +27,9 @@ typedef struct {
     TaskQueue *queue;
 } ThreadPool;
 
+// 
+extern ThreadPool *pool;
+
 
 TaskQueue* createTaskQueue(int capacity);
 
@@ -36,9 +38,6 @@ void destroyTaskQueue(TaskQueue *queue);
 
 
 void enqueue(TaskQueue *queue, int task);
-
-
-int dequeue(TaskQueue *queue);
 
 
 void* workerThread(void *arg);

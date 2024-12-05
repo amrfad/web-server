@@ -8,12 +8,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "http_request.h"
 #include "http_response.h"
 
 #define BUFFER_SIZE 1024
 
 extern int server_fd;
+extern int keep_running;
 
 
 void handle_signal(int sig);

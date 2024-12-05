@@ -1,17 +1,21 @@
 #include "server.h"
+#include "thread_pool.h"
 
 // Variabel global untuk socket server
 int server_fd;
+
+int keep_running = 1;
 
 // Prosedur untuk menangani keyboard interrupt
 void handle_signal(int sig) {
     if (sig == SIGINT) {
 	printf("\nReceived SIGINT (CTRL+C). Shutting down server...\n");
-	if (server_fd > 0) {
-	    // Close server socket
-	    close(server_fd);
-	}
-	exit(EXIT_SUCCESS);
+        keep_running = 0;
+        if (server_fd > 0) {
+            close(server_fd);  // Tutup server socket
+	    destroyThreadPool(pool);
+	    exit(EXIT_SUCCESS);
+        }
     }
 }
 
@@ -65,10 +69,14 @@ void handle_client(int client_fd) {
 	if (parse_http_request(buffer, &request)) {
 	    char response[8192];
 	    handle_request(&request, response, sizeof(response));
-	    printf("%s\n", response);
 	    free_http_request(&request);
-
+	    
+	    #ifdef DEBUG
+		printf("%s\n", response);
+	    #endif
+	    
 	    // Send response to client
+	    usleep(1000);
 	    send(client_fd, response, strlen(response), 0);
 	}
     }
@@ -79,16 +87,21 @@ void handle_client(int client_fd) {
 
 // Terima koneksi client
 void accept_client(int server_fd) {
-    // Accept connection
     struct sockaddr_in client_addr;
     socklen_t client_len = sizeof(client_addr);
-    int client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
-	
-    if (client_fd < 0) {
-        perror("Accept failed!");
-        return;
+    int client_fd;
+
+    while (keep_running) {
+        client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
+        if (!keep_running) break;  // Keluar jika server diminta berhenti
+
+        if (client_fd < 0) {
+            if (errno == EINTR) continue;  // Sinyal diterima, lanjutkan loop
+            perror("Accept failed!");
+            return;
+        }
+        
+        printf("New client connected\n");
+        enqueue(pool->queue, client_fd);
     }
-	
-    printf("New client connected\n");
-    handle_client(client_fd);
 }

@@ -32,10 +32,10 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 - [x] Handle file not found
 
 ### 5. Multi-client Support
-- [ ] Thread pool
-- [ ] Handle multiple connections
+- [x] Thread pool
+- [x] Handle multiple connections
 - [ ] Connection timeouts
-- [ ] Resource cleanup
+- [x] Resource cleanup
 
 ### 6. Error & Logging
 - [ ] Basic error pages (404, 500)

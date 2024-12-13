@@ -45,7 +45,7 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 ### Optional Features
 - [ ] Keep-alive connections
 - [ ] Basic caching
-- [ ] Gzip compression
+- [x] Gzip compression
 - [ ] Basic authentication
 - [ ] Rate limiting
 

@@ -72,11 +72,13 @@ void handle_client(int client_fd) {
 	if (parse_http_request(buffer, &request)) {
 	    char response[8192];
 	    handle_request(&request, response, sizeof(response));
-	    free_http_request(&request);
 	    
 	    #ifdef DEBUG
-		printf("%s\n", response);
+	    print_http_request(&request);
+	    printf("%s\n", response);
 	    #endif
+
+	    free_http_request(&request);
 	    
 	    // Send response to client
 	    usleep(1000);

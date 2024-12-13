@@ -64,4 +64,30 @@ int parse_http_request(const char *raw_request, HttpRequest *request);
  */
 void free_http_request(HttpRequest *request);
 
+// Hanya untuk debug
+#ifdef DEBUG
+/**
+ * @brief Mencetak query parameter yang ada dalam HTTP request.
+ *
+ * @param params Array query parameter.
+ * @param param_count Jumlah query parameter.
+ */
+void print_query_params(QueryParam *params, size_t param_count);
+
+/**
+ * @brief Mencetak header yang ada dalam HTTP request.
+ *
+ * @param headers Array header.
+ * @param header_count Jumlah header.
+ */
+void print_headers(Header *headers, size_t header_count);
+
+/**
+ * @brief Mencetak keseluruhan detail HTTP request.
+ *
+ * @param request Pointer ke struktur HttpRequest.
+ */
+void print_http_request(const HttpRequest *request);
+#endif
+
 #endif

@@ -113,3 +113,32 @@ void free_http_request(HttpRequest *request) {
     free(request->params);
     free(request->headers);
 }
+
+#ifdef DEBUG
+// Mencetak query parameter yang ada dalam HTTP request.
+void print_query_params(QueryParam *params, size_t param_count) {
+    printf("Query Parameters (%zu):\n", param_count);
+    for (size_t i = 0; i < param_count; i++) {
+        printf("  %s: %s\n", params[i].key, params[i].value);
+    }
+}
+
+// Mencetak header yang ada dalam HTTP request.
+void print_headers(Header *headers, size_t header_count) {
+    printf("Headers (%zu):\n", header_count);
+    for (size_t i = 0; i < header_count; i++) {
+        printf("  %s: %s\n", headers[i].key, headers[i].value);
+    }
+}
+
+// Mencetak keseluruhan detail HTTP request.
+void print_http_request(const HttpRequest *request) {
+    printf("HTTP Request Details:\n");
+    printf("  Method: %s\n", request->method);
+    printf("  Path: %s\n", request->path);
+    printf("  Protocol: %s\n", request->protocol);
+    
+    print_query_params(request->params, request->param_count);
+    print_headers(request->headers, request->header_count);
+}
+#endif

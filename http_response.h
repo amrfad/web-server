@@ -31,7 +31,17 @@ const char *get_status_message(int status_code);
 void create_response(unsigned char *buffer, size_t buffer_size, int status_code, 
                      const char *content_type, const unsigned char *body, size_t body_length);
 
-
+/**
+ * @brief Membuat respons HTTP lengkap dengan dukungan gzip
+ *
+ * @param buffer Buffer untuk menyimpan respons HTTP.
+ * @param buffer_size Ukuran maksimal buffer.
+ * @param status_code Kode status HTTP untuk respons (contoh: 200, 404).
+ * @param content_type Jenis konten untuk header `Content-Type` (contoh: "text/html").
+ * @param body Isi body respons (contoh: "<h1>Hello, World!</h1>").
+ * @param body_length Ukuran untuk body respons.
+ * @param content_encoding Metode encoding yang digunakan
+ */
 void create_response_with_encoding(unsigned char *buffer, size_t buffer_size, int status_code, 
                                    const char *content_type, const unsigned char *body, size_t body_length, 
                                    const char *content_encoding);

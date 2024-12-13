@@ -32,7 +32,7 @@ Repositori ini berisi hasil pengerjaan tugas besar mata kuliah Sistem Operasi Pr
 - [x] Handle file not found
 
 ### 5. Multi-client Support
-- [x] Thread pool
+- [x] Process pool
 - [x] Handle multiple connections
 - [ ] Connection timeouts
 - [x] Resource cleanup

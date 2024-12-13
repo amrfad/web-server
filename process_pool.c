@@ -27,7 +27,7 @@ void workerProcess(int serverSocket) {
             perror("accept");
             continue;
         }
-        printf("New client connected\n");
+        printf("Client connected.\n");
 
         // Tangani permintaan klien
         handle_client(clientSocket);

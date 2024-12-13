@@ -70,19 +70,20 @@ void handle_client(int client_fd) {
 	// Parsing request dan mengirimkan response
 	HttpRequest request;
 	if (parse_http_request(buffer, &request)) {
-	    char response[8192];
-	    handle_request(&request, response, sizeof(response));
-	    
 	    #ifdef DEBUG
 	    print_http_request(&request);
-	    printf("%s\n", response);
 	    #endif
 
+	    unsigned char response[MAX_RESPONSE_SIZE];
+	    handle_request(&request, response, sizeof(response));
+	    #ifdef DEBUG
+	    printf("%s\n", response);
+	    #endif
 	    free_http_request(&request);
 	    
 	    // Send response to client
 	    usleep(1000);
-	    send(client_fd, response, strlen(response), 0);
+	    send(client_fd, response, sizeof(response), 0);
 	}
     }
 	

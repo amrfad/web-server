@@ -13,6 +13,7 @@
 #include "http_response.h"
 
 #define BUFFER_SIZE 1024
+#define MAX_RESPONSE_SIZE 2 * 1024 * 1024
 
 extern int server_fd;
 extern int keep_running;

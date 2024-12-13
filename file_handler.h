@@ -16,12 +16,10 @@
  * 
  * @param filepath       Path ke file yang akan dibaca.
  * @param content        Pointer ke buffer untuk menyimpan konten file.
- *                       Buffer ini akan dialokasikan secara dinamis, 
- *                       dan perlu dibebaskan oleh pemanggil menggunakan `free`.
  * @param content_length Pointer untuk menyimpan ukuran konten file.
  * @return               true jika file berhasil dibaca, false jika terjadi kesalahan.
  */
-bool read_file(const char *filepath, char **content, size_t *content_length);
+bool read_file(const char *file_path, unsigned char **content, size_t *content_length);
 
 /**
  * Menentukan Content-Type dari file berdasarkan ekstensi.

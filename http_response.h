@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include "http_request.h"
 #include "file_handler.h"
+#include "gzip_compression.h"
 
 /**
  * @brief Mengembalikan pesan status berdasarkan kode status HTTP.
@@ -27,8 +28,13 @@ const char *get_status_message(int status_code);
  * @param content_type Jenis konten untuk header `Content-Type` (contoh: "text/html").
  * @param body Isi body respons (contoh: "<h1>Hello, World!</h1>").
  */
-void create_response(char *buffer, size_t buffer_size, int status_code,
-                     const char *content_type, const char *body);
+void create_response(unsigned char *buffer, size_t buffer_size, int status_code, 
+                     const char *content_type, const unsigned char *body, size_t body_length);
+
+
+void create_response_with_encoding(unsigned char *buffer, size_t buffer_size, int status_code, 
+                                   const char *content_type, const unsigned char *body, size_t body_length, 
+                                   const char *content_encoding);
 
 /**
  * @brief Memvalidasi request HTTP untuk memastikan formatnya benar.
@@ -41,11 +47,11 @@ bool validate_request(const HttpRequest *request);
 /**
  * @brief Menangani request dengan metode GET berdasarkan path yang diminta.
  *
- * @param path Path dari resource yang diminta (contoh: "/", "/about").
+ * @param request Hasil parsing dari HTTP request
  * @param response Buffer untuk menyimpan respons HTTP.
  * @param response_size Ukuran maksimal buffer respons.
  */
-void handle_get_request(const char *path, char *response, size_t response_size);
+void handle_get_request(const HttpRequest *request, unsigned char *response, size_t response_size);
 
 /**
  * @brief Menangani request HTTP berdasarkan metode dan path.
@@ -54,6 +60,6 @@ void handle_get_request(const char *path, char *response, size_t response_size);
  * @param response Buffer untuk menyimpan respons HTTP.
  * @param response_size Ukuran maksimal buffer respons.
  */
-void handle_request(HttpRequest *request, char *response, size_t response_size);
+void handle_request(HttpRequest *request, unsigned char *response, size_t response_size);
 
 #endif

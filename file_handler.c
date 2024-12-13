@@ -1,25 +1,29 @@
 #include "file_handler.h"
 
 // Fungsi untuk membaca file dari path
-bool read_file(const char *file_path, char **content, size_t *content_length) {
+bool read_file(const char *file_path, unsigned char **content, size_t *content_length) {
     int fd = open(file_path, O_RDONLY);
-    if (fd < 0) return false; // Gagal membuka file
+    if (fd < 0) return false;
 
     struct stat file_stat;
     if (fstat(fd, &file_stat) < 0) {
-	close(fd);
-	return false;
+        close(fd);
+        return false;
     }
 
     *content_length = file_stat.st_size;
-    *content = malloc(*content_length + 1); // Tambahkan 1 byte untuk '\0'
-    if (*content == NULL) {
-	close(fd);
-	return false;
+    *content = malloc(*content_length);
+    if (!*content) {
+        close(fd);
+        return false;
     }
 
-    read(fd, *content, *content_length);
-    (*content)[*content_length] = '\0'; // Null-terminate untuk keamanan
+    if (read(fd, *content, *content_length) != (ssize_t)*content_length) {
+        free(*content);
+        close(fd);
+        return false;
+    }
+
     close(fd);
     return true;
 }
@@ -52,6 +56,7 @@ bool validate_path(const char *root, const char *path, char *resolved_path, size
 
     // Memastikan resolved_path berada di dalam root direktori
     if (strncmp(root, resolved_path, strlen(root)) != 0) {
+        printf("\n\n\n$%s %s\n\n\n", root, resolved_path);
         return false; // Path di luar root direktori
     }
 

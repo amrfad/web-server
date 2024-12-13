@@ -54,8 +54,8 @@ int parse_headers(const char *request, Header *headers, size_t *header_count) {
 	char *colon = strchr(line, ':');
 	if (colon) {
 	    *colon = '\0'; // Pisahkan key dan value
-	    strncpy(headers[count].key, line, sizeof(headers[count]));
-	    strncpy(headers[count].value, colon + 2, sizeof(headers[count])); // Melewati spasi setelah :
+	    strncpy(headers[count].key, line, sizeof(headers[count].key));
+	    strncpy(headers[count].value, colon + 2, sizeof(headers[count].value)); // Melewati spasi setelah :
 	}
 
 	count++;

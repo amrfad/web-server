@@ -1,20 +1,20 @@
 #include "server.h"
-#include "thread_pool.h"
+#include "process_pool.h"
 
 int main() {
-    // Tangani keyboard interrupt
-    signal(SIGINT, handle_signal);
+    parent_pid = getpid(); // Simpan PID parent
+    signal(SIGINT, handle_signal); // Tangani SIGINT
 
-    // Inisialisasi server
-    server_fd = initialize_server();
-    
-    // Inisialisasi Thread Pool
-    pool = createThreadPool(THREAD_POOL_SIZE, MAX_QUEUE);
+    server_fd = initialize_server(); // Inisialisasi server
 
-    // Menerima client
-    accept_client(server_fd);
-    
-    // 
-    destroyThreadPool(pool);
+    pool = createProcessPool(PROCESS_POOL_SIZE, server_fd); // Inisialisasi process pool
+
+    // Proses utama hanya menunggu hingga ada sinyal untuk shutdown
+    while (keep_running) {
+        pause(); // Tunggu sinyal
+    }
+
+    destroyProcessPool(pool); // Cleanup jika ada kesalahan
     return 0;
 }
+

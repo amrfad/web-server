@@ -17,16 +17,25 @@
 extern int server_fd;
 extern int keep_running;
 
-
+/**
+ * @brief Menangani sinyal yang diterima oleh server, khususnya SIGINT.
+ *
+ * @param sig Nomor sinyal yang diterima.
+ */
 void handle_signal(int sig);
 
-
+/**
+ * @brief Menginisialisasi socket server.
+ *
+ * @return File descriptor socket yang telah dikonfigurasi.
+ */
 int initialize_server();
 
-
+/**
+ * @brief Memproses koneksi dari client yang terhubung.
+ *
+ * @param client_fd File descriptor socket client.
+ */
 void handle_client(int client_fd);
-
-
-void accept_client(int server_fd);
 
 #endif

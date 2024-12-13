@@ -1,20 +1,23 @@
 #include "server.h"
-#include "thread_pool.h"
+#include "process_pool.h"
 
 // Variabel global untuk socket server
 int server_fd;
-
 int keep_running = 1;
 
-// Prosedur untuk menangani keyboard interrupt
+// Prosedur untuk menangani SIGINT
 void handle_signal(int sig) {
     if (sig == SIGINT) {
-	printf("\nReceived SIGINT (CTRL+C). Shutting down server...\n");
+
+	if (getpid() == parent_pid) {
+	    printf("\nReceived SIGINT (CTRL+C). Shutting down server...\n");
+	}
+	
         keep_running = 0;
         if (server_fd > 0) {
-            close(server_fd);  // Tutup server socket
-	    destroyThreadPool(pool);
-	    exit(EXIT_SUCCESS);
+            close(server_fd);       // Tutup server socket
+            destroyProcessPool(pool); // Hentikan semua worker
+            exit(EXIT_SUCCESS);
         }
     }
 }
@@ -83,25 +86,4 @@ void handle_client(int client_fd) {
 	
     // Close client socket
     close(client_fd);
-}
-
-// Terima koneksi client
-void accept_client(int server_fd) {
-    struct sockaddr_in client_addr;
-    socklen_t client_len = sizeof(client_addr);
-    int client_fd;
-
-    while (keep_running) {
-        client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
-        if (!keep_running) break;  // Keluar jika server diminta berhenti
-
-        if (client_fd < 0) {
-            if (errno == EINTR) continue;  // Sinyal diterima, lanjutkan loop
-            perror("Accept failed!");
-            return;
-        }
-        
-        printf("New client connected\n");
-        enqueue(pool->queue, client_fd);
-    }
 }

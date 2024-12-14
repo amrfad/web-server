@@ -43,22 +43,3 @@ const char *get_content_type(const char *file_path) {
 
     return "application/octet-stream"; // Default untuk tipe tidak dikenal
 }
-
-// Fungsi untuk memvalidasi path agar tetap dalam root direktori
-bool validate_path(const char *root, const char *path, char *resolved_path, size_t resolved_size) {
-    char temp_path[512];
-    snprintf(temp_path, sizeof(temp_path), "%s%s", root, path); // Gabungkan root dengan path
-
-    // Konversi ke path absolut
-    if (realpath(temp_path, resolved_path) == NULL) {
-        return false; // Gagal menyelesaikan path
-    }
-
-    // Memastikan resolved_path berada di dalam root direktori
-    if (strncmp(root, resolved_path, strlen(root)) != 0) {
-        printf("\n\n\n$%s %s\n\n\n", root, resolved_path);
-        return false; // Path di luar root direktori
-    }
-
-    return true;
-}

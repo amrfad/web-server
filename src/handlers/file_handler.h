@@ -30,16 +30,4 @@ bool read_file(const char *file_path, unsigned char **content, size_t *content_l
  */
 const char *get_content_type(const char *file_path);
 
-/**
- * Memvalidasi dan menyelesaikan path file yang diminta.
- * 
- * @param root          Root direktori yang diizinkan.
- * @param path          Path relatif yang diminta oleh client.
- * @param resolved_path Buffer untuk menyimpan path absolut yang diselesaikan.
- * @param resolved_size Ukuran maksimum dari buffer `resolved_path`.
- * @return              true jika path valid dan berada dalam root direktori,
- *                      false jika path tidak valid atau keluar dari root direktori.
- */
-bool validate_path(const char *root, const char *path, char *resolved_path, size_t resolved_size);
-
 #endif

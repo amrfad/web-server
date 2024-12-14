@@ -82,7 +82,6 @@ void handle_client(int client_fd) {
 	    free_http_request(&request);
 	    
 	    // Send response to client
-	    usleep(1000);
 	    send(client_fd, response, sizeof(response), 0);
 	}
     }

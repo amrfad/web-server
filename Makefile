@@ -2,6 +2,13 @@ CC = gcc
 CFLAGS = -Wall -Wextra -I./src/core -I./src/handlers -I./src/compression
 LDFLAGS = -lz
 
+# Opsi untuk mode debug
+DEBUG ?= 0
+
+ifeq ($(DEBUG),1)
+    CFLAGS += -g -DDEBUG
+endif
+
 # Direktori
 SRC_DIR = src
 OBJ_DIR = obj
@@ -36,5 +43,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
+# Target debug
+debug:
+	$(MAKE) DEBUG=1
+
 # Mencegah konflik dengan file bernama 'target'
-.PHONY: all clean
+.PHONY: all clean debug

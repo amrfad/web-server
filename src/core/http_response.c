@@ -93,6 +93,51 @@ void handle_get_request(const HttpRequest *request, unsigned char *response, siz
     }
 }
 
+// Prosedur untuk menuliskan data yang diterima dari POST request ke file log
+void log_post_data(const HttpRequest *request) {
+    const char *log_file_path = "./logs/post.log";
+    FILE *log_file = fopen(log_file_path, "a");
+    if (!log_file) {
+        perror("Failed to open log file");
+        return;
+    }
+
+    // Tulis waktu sekarang ke log
+    time_t now = time(NULL);
+    fprintf(log_file, "Time: %s", ctime(&now));
+
+    // Log path request
+    fprintf(log_file, "Path: %s\n", request->path);
+
+    // Log parameter body
+    fprintf(log_file, "Body Parameters:\n");
+    for (size_t i = 0; i < request->body_param_count; i++) {
+        fprintf(log_file, "  %s = %s\n", request->body_params[i].key, request->body_params[i].value);
+    }
+
+    fprintf(log_file, "------------------------\n");
+    fclose(log_file);
+}
+
+// Prosedur untuk menangani POST request
+void handle_post_request(HttpRequest *request, unsigned char *response, size_t response_size) {
+    // Validasi jika tidak ada body parameter
+    if (request->body_param_count == 0) {
+        create_response(response, response_size, 400, "text/html", 
+                        (unsigned char *)"<h1>400 Bad Request</h1><p>No body parameters provided.</p>", 
+                        strlen("<h1>400 Bad Request</h1><p>No body parameters provided.</p>"));
+        return;
+    }
+
+    // Log data POST ke file
+    log_post_data(request);
+
+    // Buat respons sukses
+    const char *success_message = "<h1>200 OK</h1><p>Data received and logged successfully.</p>";
+    create_response(response, response_size, 200, "text/html", 
+                    (unsigned char *)success_message, strlen(success_message));
+}
+
 // Fungsi utama untuk menangani HEAD request
 void handle_head_request(const HttpRequest *request, unsigned char *response, size_t response_size) {
     char file_path[512];
@@ -122,7 +167,7 @@ void handle_request(HttpRequest *request, unsigned char *response, size_t respon
     if (strcmp(request->method, "GET") == 0) {
         handle_get_request(request, response, response_size);
     } else if (strcmp(request->method, "POST") == 0) {
-        create_response(response, response_size, 501, "text/html", (unsigned char *)"<h1>501 Method Not Implemented</h1>", strlen("<h1>501 Method Not Implemented</h1>"));
+        handle_post_request(request, response, response_size);
     } else if (strcmp(request->method, "HEAD") == 0) {
         handle_head_request(request, response, response_size);
     } else {

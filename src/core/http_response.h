@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <time.h>
 #include "http_request.h"
 #include "file_handler.h"
 #include "gzip_compression.h"

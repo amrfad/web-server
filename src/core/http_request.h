@@ -17,6 +17,12 @@ typedef struct {
     char value[256];
 } Header;
 
+// Struktur untuk menyimpan key-value dari body POST
+typedef struct {
+    char key[64];
+    char value[256];
+} BodyParam;
+
 // Struktur untuk menyimpan keseluruhan HTTP request
 typedef struct {
     char method[16];
@@ -26,6 +32,8 @@ typedef struct {
     char protocol[16];
     Header *headers;
     size_t header_count;
+    BodyParam *body_params;
+    size_t body_param_count;
 } HttpRequest;
 
 /**
@@ -47,6 +55,16 @@ int parse_query_params(const char *path, QueryParam *params, size_t *param_count
  * @return             1 jika sukses.
  */
 int parse_headers(const char *request, Header *headers, size_t *header_count);
+
+/**
+ * Parse body POST ke key-value pairs.
+ *
+ * @param body       String body.
+ * @param params     Array untuk menyimpan key-value pairs.
+ * @param param_count Pointer untuk jumlah key-value pairs.
+ * @return           1 jika sukses, 0 jika gagal.
+ */
+int parse_body_params(const char *body, BodyParam *params, size_t *param_count);
 
 /**
  * Parse keseluruhan HTTP request.
@@ -81,6 +99,14 @@ void print_query_params(QueryParam *params, size_t param_count);
  * @param header_count Jumlah header.
  */
 void print_headers(Header *headers, size_t header_count);
+
+/**
+ * @brief Mencetak body parameter yang ada dalam HTTP request.
+ *
+ * @param params Array body parameter.
+ * @param param_count Jumlah body parameter.
+ */
+void print_body_params(BodyParam *params, size_t param_count);
 
 /**
  * @brief Mencetak keseluruhan detail HTTP request.

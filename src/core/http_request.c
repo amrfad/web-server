@@ -66,12 +66,42 @@ int parse_headers(const char *request, Header *headers, size_t *header_count) {
     return 1;
 }
 
+// Parse body POST ke key-value pairs.
+int parse_body_params(const char *body, BodyParam *params, size_t *param_count) {
+    char temp_body[1024];
+    strncpy(temp_body, body, sizeof(temp_body) - 1);
+    temp_body[sizeof(temp_body) - 1] = '\0';
+
+    char *pair = strtok(temp_body, "&");
+    size_t count = 0;
+
+    while (pair && count < *param_count) {
+        char *equals = strchr(pair, '=');
+        if (equals) {
+            *equals = '\0';
+            strncpy(params[count].key, pair, sizeof(params[count].key) - 1);
+            params[count].key[sizeof(params[count].key) - 1] = '\0';
+            strncpy(params[count].value, equals + 1, sizeof(params[count].value) - 1);
+            params[count].value[sizeof(params[count].value) - 1] = '\0';
+        } else {
+            strncpy(params[count].key, pair, sizeof(params[count].key) - 1);
+            params[count].key[sizeof(params[count].key) - 1] = '\0';
+            params[count].value[0] = '\0';
+        }
+        count++;
+        pair = strtok(NULL, "&");
+    }
+
+    *param_count = count;
+    return 1;
+}
+
 // Parse keseluruhan HTTP request.
 int parse_http_request(const char *raw_request, HttpRequest *request) {
     // Parse request line
     const char *request_line_end = strstr(raw_request, "\r\n");
     if (!request_line_end) {
-	return 0; // Format tidak valid
+        return 0; // Format tidak valid
     }
 
     char request_line[1024];
@@ -86,11 +116,10 @@ int parse_http_request(const char *raw_request, HttpRequest *request) {
     size_t param_count = 16;
     parse_query_params(request->path, params, &param_count);
 
-    // Alokasi memori untuk params
     request->param_count = param_count;
     request->params = malloc(param_count * sizeof(QueryParam));
     for (size_t i = 0; i < param_count; i++) {
-	request->params[i] = params[i];
+        request->params[i] = params[i];
     }
 
     // Parse headers
@@ -98,11 +127,50 @@ int parse_http_request(const char *raw_request, HttpRequest *request) {
     size_t header_count = 16;
     parse_headers(raw_request, headers, &header_count);
 
-    // Alokasi memori untuk headers
     request->header_count = header_count;
     request->headers = malloc(header_count * sizeof(Header));
     for (size_t i = 0; i < header_count; i++) {
-	request->headers[i] = headers[i];
+        request->headers[i] = headers[i];
+    }
+
+    // Parse body jika method adalah POST
+    if (strcmp(request->method, "POST") == 0) {
+        const char *body_start = strstr(raw_request, "\r\n\r\n");
+        if (body_start) {
+            body_start += 4;
+
+            // Ambil Content-Length dari headers
+            size_t content_length = 0;
+            for (size_t i = 0; i < request->header_count; i++) {
+                if (strcasecmp(request->headers[i].key, "Content-Length") == 0) {
+                    content_length = atoi(request->headers[i].value);
+                    break;
+                }
+            }
+
+            if (content_length > 0) {
+                // Parse body jika Content-Type mendukung
+                for (size_t i = 0; i < request->header_count; i++) {
+                    if (strcasecmp(request->headers[i].key, "Content-Type") == 0 &&
+                        strcasecmp(request->headers[i].value, "application/x-www-form-urlencoded") == 0) {
+                        
+                        BodyParam body_params[16];
+                        size_t body_param_count = 16;
+                        parse_body_params(body_start, body_params, &body_param_count);
+
+                        request->body_param_count = body_param_count;
+                        request->body_params = malloc(body_param_count * sizeof(BodyParam));
+                        for (size_t j = 0; j < body_param_count; j++) {
+                            request->body_params[j] = body_params[j];
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    } else {
+        request->body_params = NULL;
+        request->body_param_count = 0;
     }
 
     return 1;
@@ -112,6 +180,9 @@ int parse_http_request(const char *raw_request, HttpRequest *request) {
 void free_http_request(HttpRequest *request) {
     free(request->params);
     free(request->headers);
+    if (request->body_params) {
+        free(request->body_params);
+    }
 }
 
 #ifdef DEBUG
@@ -131,6 +202,14 @@ void print_headers(Header *headers, size_t header_count) {
     }
 }
 
+// Mencetak body yang ada dalam HTTP request.
+void print_body_params(BodyParam *params, size_t param_count) {
+    printf("Body Parameters (%zu):\n", param_count);
+    for (size_t i = 0; i < param_count; i++) {
+        printf("  %s: %s\n", params[i].key, params[i].value);
+    }
+}
+
 // Mencetak keseluruhan detail HTTP request.
 void print_http_request(const HttpRequest *request) {
     printf("HTTP Request Details:\n");
@@ -140,5 +219,6 @@ void print_http_request(const HttpRequest *request) {
     
     print_query_params(request->params, request->param_count);
     print_headers(request->headers, request->header_count);
+    print_body_params(request->body_params, request->body_param_count);
 }
 #endif

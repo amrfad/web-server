@@ -8,7 +8,7 @@ static volatile int shutdown_flag = 0;
 
 // Handler untuk sinyal SIGTERM (digunakan oleh worker)
 void handle_worker_shutdown(int sig) {
-    shutdown_flag = 1;
+    if (sig == SIGINT) shutdown_flag = 1;
 }
 
 // Fungsi utama untuk worker

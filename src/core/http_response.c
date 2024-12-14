@@ -93,6 +93,25 @@ void handle_get_request(const HttpRequest *request, unsigned char *response, siz
     }
 }
 
+// Fungsi utama untuk menangani HEAD request
+void handle_head_request(const HttpRequest *request, unsigned char *response, size_t response_size) {
+    char file_path[512];
+    const char *root = "./www";
+    snprintf(file_path, sizeof(file_path), "%s%s", root, request->path);
+
+    struct stat path_stat;
+    if (stat(file_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode)) {
+        strncat(file_path, "/index.html", sizeof(file_path) - strlen(file_path) - 1);
+    }
+
+    if (stat(file_path, &path_stat) == 0 && S_ISREG(path_stat.st_mode)) {
+        const char *content_type = get_content_type(file_path);
+        create_response(response, response_size, 200, content_type, (unsigned char *)"", 0);
+    } else {
+        create_response(response, response_size, 404, "text/html", (unsigned char *)"", 0);
+    }
+}
+
 // Fungsi utama untuk menangani request HTTP
 void handle_request(HttpRequest *request, unsigned char *response, size_t response_size) {
     if (!validate_request(request)) {
@@ -104,6 +123,8 @@ void handle_request(HttpRequest *request, unsigned char *response, size_t respon
         handle_get_request(request, response, response_size);
     } else if (strcmp(request->method, "POST") == 0) {
         create_response(response, response_size, 501, "text/html", (unsigned char *)"<h1>501 Method Not Implemented</h1>", strlen("<h1>501 Method Not Implemented</h1>"));
+    } else if (strcmp(request->method, "HEAD") == 0) {
+        handle_head_request(request, response, response_size);
     } else {
         create_response(response, response_size, 405, "text/html", (unsigned char *)"<h1>405 Method Not Allowed</h1>", strlen("<h1>405 Method Not Allowed</h1>"));
     }
